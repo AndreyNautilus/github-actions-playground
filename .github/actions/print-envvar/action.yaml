@@ -1,0 +1,53 @@
+name: print-envvar-action
+description: Print environment variable
+
+inputs:
+  envvar-name:
+    description: Name of the additional envvar to print
+    required: false
+    default: ''
+
+runs:
+  using: composite
+  steps:
+    - name: Print MY_CUSTOM_ENVVAR as envvar
+      run: |
+        echo "Printing MY_CUSTOM_ENVVAR"
+        echo $MY_CUSTOM_ENVVAR
+      shell: bash
+
+    - name: Print MY_CUSTOM_ENVVAR from env context
+      run: |
+        echo "Printing MY_CUSTOM_ENVVAR from env context"
+        echo "${{ env.MY_CUSTOM_ENVVAR }}"
+      shell: bash
+
+    - name: Report empty input parameter
+      if: inputs.envvar-name == ''
+      run: echo "No additional envvar to print"
+      shell: bash
+
+    - name: Print additional envvar from context
+      if: inputs.envvar-name != ''
+      run: |
+        echo "Printing ${{ inputs.envvar-name }} from env context..."
+        echo "${{ env[inputs.envvar-name] }}"
+      shell: bash
+
+    - name: Print additional envvar via proxy
+      if: inputs.envvar-name != ''
+      env:
+        ADDITIONAL_ENVVAR: ${{ env[inputs.envvar-name] }}
+      run: |
+        echo "Printing ${{ inputs.envvar-name }} via proxy ..."
+        echo "$ADDITIONAL_ENVVAR"
+      shell: bash
+
+    - name: Print additional envvar
+      if: inputs.envvar-name != ''
+      run: |
+        echo "Printing ${{ inputs.envvar-name }}..."
+        echo "${${{ inputs.envvar-name }}}"
+      shell: bash
+
+

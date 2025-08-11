@@ -1,0 +1,126 @@
+name: Syntax checks
+
+on:
+  workflow_dispatch:
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  contexts:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print github context
+        run: |
+          echo "github.ref = ${{ github.ref }}"
+          echo "github.base_ref = ${{ github.base_ref }}"
+          echo "github.ref_name = ${{ github.ref_name }}"
+
+  # debug-logging:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - name: Call action without params
+  #       uses: ./.github/actions/testing-action
+  #     - name: Call action with verbose
+  #       uses: ./.github/actions/testing-action
+  #       with:
+  #         verbose: true
+
+  fromjson:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Bash creates output with JSON string
+        id: json-from-bash
+        run: |
+          JSON_DATA='{"data": "some string", "long_data": "line1\nline2", "flag1": true, "flag2": false}'
+          echo "json=$JSON_DATA" >> "$GITHUB_OUTPUT"
+      - name: Print parts of the generated JSON
+        run: |
+          echo '${{ steps.json-from-bash.outputs.json }}'
+          echo '${{ fromJSON(steps.json-from-bash.outputs.json).long_data }}'
+      - name: This step should run
+        if: fromJSON(steps.json-from-bash.outputs.json).flag1
+        run: echo "I should be printed"
+      - name: This step should be skipped
+        if: fromJSON(steps.json-from-bash.outputs.json).flag2
+        run: exit 1
+
+      - name: github-script creates output with JSON string
+        id: json-from-js
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const json_data = {
+              "data": "some string",
+              "long_data": "line1\nline2",
+              "flag1": true,
+              "flag2": false
+            }
+            console.log(json_data)
+            core.setOutput('json', json_data)
+      - name: Print parts of the generated JSON
+        run: |
+          echo '${{ steps.json-from-js.outputs.json }}'
+          echo '${{ fromJSON(steps.json-from-js.outputs.json).long_data }}'
+      - name: This step should run
+        if: fromJSON(steps.json-from-js.outputs.json).flag1
+        run: echo "I should be printed"
+      - name: This step should be skipped
+        if: fromJSON(steps.json-from-js.outputs.json).flag2
+        run: exit 1
+
+      - name: Condition with fromJSON('true')
+        if: fromJSON('true')
+        run: echo "I should be printed"
+      - name: Condition with fromJSON('false')
+        if: fromJSON('false')
+        run: exit 1
+
+      - name: Output stringified booleans
+        id: bool-as-string
+        run: |
+          echo "true_value=true" >> "$GITHUB_OUTPUT"
+          echo "false_value=false" >> "$GITHUB_OUTPUT"
+      - name: This step should run
+        if: fromJSON(steps.bool-as-string.outputs.true_value)
+        run: echo "I should be printed"
+      - name: This step should be skipped
+        if: fromJSON(steps.bool-as-string.outputs.false_value)
+        run: exit 1
+
+  ternary-operator:
+    runs-on: ubuntu-latest
+    steps:
+      - id: declaration
+        run: |
+          {
+            echo "value=abc"
+            echo "value2=def"
+            echo "empty_value="
+          } >> "$GITHUB_OUTPUT"
+      - run: |
+          echo "value: ${{ steps.declaration.outputs.value }}"
+          echo "empty_value: ${{ steps.declaration.outputs.empty_value }}"
+          echo "no_value: ${{ steps.declaration.outputs.no_value }}"
+          echo "or condition: ${{ steps.declaration.outputs.empty_value || steps.declaration.outputs.value }}"
+          echo "or condition: ${{ steps.declaration.outputs.value || steps.declaration.outputs.value2 }}"
+          echo "ternary-yes: ${{ (steps.declaration.outputs.value == 'abc') && 'Yes' || 'No' }}"
+          echo "ternary-no: ${{ (steps.declaration.outputs.value != 'abc') && 'Yes' || 'No' }}"
+
+  pass-envvar-to-action:
+    runs-on: ubuntu-latest
+    env:
+      ANOTHER_CUSTOM_ENVVAR: "Gendalf's never late"
+    steps:
+      - uses: actions/checkout@v4  # required to use the local action
+      - name: Action access jobs envvars
+        uses: ./.github/actions/print-envvar
+        env:
+          MY_CUSTOM_ENVVAR: "Hello, world!"
+      - name: Pass envvar name to the action
+        uses: ./.github/actions/print-envvar
+        with:
+          envvar-name: ANOTHER_CUSTOM_ENVVAR
