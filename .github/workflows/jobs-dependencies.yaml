@@ -1,0 +1,46 @@
+name: Jobs dependencies
+
+# This workflow demos an unexpected behaviour of GitHub Actions:
+#   if any of INDIRECT dependencies of a job is skipped, the job will also be skipped.
+# The workaround:
+#   explicitly define `if`-condition: always() AND direct dependencies are `success`.
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "7 10 1 * *"  # at 10:07 on the first day of every month (i.e. monthly)
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  jobs-deps-1:
+    runs-on: ubuntu-latest
+    if: false  # the job must be skipped
+    steps:
+      - run: echo "Never printed"
+
+  jobs-deps-2:
+    # This job will run even though jobs-deps-1 is skipped
+    needs: jobs-deps-1
+    # 'always()' is required
+    if: always() && (needs.jobs-deps-1.result == 'success' || needs.jobs-deps-1.result == 'skipped')
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Job 2"
+
+  jobs-deps-3:
+    # This job is skipped, because of GitHub "bug": https://github.com/actions/runner/issues/2205
+    needs: jobs-deps-2
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Job 3 is expected to run"
+
+  jobs-deps-3-workaround:
+    # This job will run because we workaround the GitHub bug.
+    needs: jobs-deps-2
+    if: always() && (needs.jobs-deps-2.result == 'success')
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Job 3-1 is expected to run"
