@@ -10,7 +10,6 @@ on:
       - main
   schedule:
     - cron: "7 10 1 * *"  # at 10:07 on the first day of every month (i.e. monthly)
-  pull_request:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
