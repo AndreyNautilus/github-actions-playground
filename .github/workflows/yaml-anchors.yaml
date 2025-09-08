@@ -1,0 +1,35 @@
+name: YAML anchors
+
+# Demo of YAML anchors in workflows.
+# https://github.com/actions/runner/issues/1182
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: "7 10 1 * *"  # at 10:07 on the first day of every month (i.e. monthly)
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  yaml-anchors:
+    runs-on: ubuntu-latest
+    env:
+      SUBJECT: &envvar world
+    steps:
+      - name: Define yaml anchor
+        run: &cmd |
+          echo "hello, ${SUBJECT}!"
+          ls -la
+      - name: Use yaml anchor in run
+        env:
+          SUBJECT: job
+        run: *cmd
+      - name: Use yaml anchor in env
+        env:
+          VAR: *envvar
+        run: echo $VAR

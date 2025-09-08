@@ -34,3 +34,8 @@ repos:
     hooks:
       - id: actionlint
         name: check GitHub workflow files
+        # https://github.com/rhysd/actionlint/issues/569
+        exclude: |
+            (?x)^(
+                .github/workflows/yaml-anchors.yaml
+            )$
