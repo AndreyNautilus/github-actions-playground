@@ -49,5 +49,3 @@ runs:
         echo "Printing ${{ inputs.envvar-name }}..."
         echo "${${{ inputs.envvar-name }}}"
       shell: bash
-
-

@@ -18,16 +18,17 @@ jobs:
           echo "github.base_ref = ${{ github.base_ref }}"
           echo "github.ref_name = ${{ github.ref_name }}"
 
-  # debug-logging:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - name: Call action without params
-  #       uses: ./.github/actions/testing-action
-  #     - name: Call action with verbose
-  #       uses: ./.github/actions/testing-action
-  #       with:
-  #         verbose: true
+  debug-logging:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Call action without params
+        # re-run the job with "debug output" checkbox enabled to see debug output
+        uses: ./.github/actions/debug-logging
+      - name: Call action with verbose
+        uses: ./.github/actions/debug-logging
+        with:
+          verbose: true
 
   fromjson:
     runs-on: ubuntu-latest
