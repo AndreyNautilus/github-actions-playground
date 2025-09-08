@@ -1,0 +1,22 @@
+name: PR checks
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  contexts:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print github context
+        run: |
+          echo "github.ref = ${{ github.ref }}"
+          echo "github.base_ref = ${{ github.base_ref }}"
+          echo "github.ref_name = ${{ github.ref_name }}"
