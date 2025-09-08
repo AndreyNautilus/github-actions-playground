@@ -1,0 +1,24 @@
+name: debug-logging
+description: Debug logging test
+
+inputs:
+  verbose:
+    description: Verbosity flag
+    required: false
+    default: ${{ runner.debug }}  # either not set (i.e. empty) or set to 1
+
+runs:
+  using: composite
+  steps:
+    - run: |
+        echo "verbosity: '${{ inputs.verbose }}'"
+      shell: bash
+    - id: detect-verbosity
+      if: inputs.verbose
+      run: |
+        echo "verbosity=-la" >> "$GITHUB_OUTPUT"
+      shell: bash
+    - run: |
+        ls ${{ steps.detect-verbosity.outputs.verbosity }}
+        echo "done"
+      shell: bash
