@@ -20,17 +20,3 @@ jobs:
           echo "github.ref = ${{ github.ref }}"
           echo "github.base_ref = ${{ github.base_ref }}"
           echo "github.ref_name = ${{ github.ref_name }}"
-
-  yaml-anchors:
-    runs-on: ubuntu-latest
-    env:
-      SUBJECT: world
-    steps:
-      - name: Define yaml anchor
-        run: &cmd |
-          echo "hello, ${SUBJECT}!"
-          ls -la
-      - name: Use yaml anchor
-        env:
-          SUBJECT: job
-        run: *cmd
