@@ -39,3 +39,7 @@ jobs:
         uses: ./.github/actions/args-checker
         with:
           arg1: ${{ secrets.NOT_EXISTING_SECRET }}
+      - name: Not-existing secret or default
+        uses: ./.github/actions/args-checker
+        with:
+          arg1: ${{ secrets.NOT_EXISTING_SECRET || 'default' }}
