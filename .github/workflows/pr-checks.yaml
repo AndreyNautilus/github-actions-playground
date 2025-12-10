@@ -20,3 +20,22 @@ jobs:
           echo "github.ref = ${{ github.ref }}"
           echo "github.base_ref = ${{ github.base_ref }}"
           echo "github.ref_name = ${{ github.ref_name }}"
+
+  check-args:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6  # required to use the local action
+      - name: No arg
+        uses: ./.github/actions/args-checker
+      - name: Empty arg
+        uses: ./.github/actions/args-checker
+        with:
+          arg1:
+      - name: Empty string arg
+        uses: ./.github/actions/args-checker
+        with:
+          arg1: ""
+      - name: Not-existing secret
+        uses: ./.github/actions/args-checker
+        with:
+          arg1: ${{ secrets.NOT_EXISTING_SECRET }}
