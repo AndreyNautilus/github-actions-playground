@@ -43,3 +43,17 @@ jobs:
         uses: ./.github/actions/args-checker
         with:
           arg1: ${{ secrets.NOT_EXISTING_SECRET || 'default' }}
+      - name: Not-existing envvar
+        uses: ./.github/actions/args-checker
+        with:
+          arg1: ${{ env.NOT_EXISTING_VAR }}
+      - name: Not-existing var or default
+        uses: ./.github/actions/args-checker
+        with:
+          arg1: ${{ env.NOT_EXISTING_VAR || 'default' }}
+      - name: Existing var suppresses default
+        env:
+          MY_VAR: var value
+        uses: ./.github/actions/args-checker
+        with:
+          arg1: ${{ env.MY_VAR || 'default' }}
