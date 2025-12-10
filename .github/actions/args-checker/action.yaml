@@ -1,0 +1,14 @@
+name: args-checker
+description: Check behaviour of arguments
+
+inputs:
+  arg1:
+    required: false
+    default: abc
+
+runs:
+  using: composite
+  steps:
+    - run: |
+        echo "arg1: '${{ inputs.arg1 }}'"
+      shell: bash
