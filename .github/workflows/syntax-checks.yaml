@@ -120,3 +120,40 @@ jobs:
         uses: ./.github/actions/print-envvar
         with:
           envvar-name: ANOTHER_CUSTOM_ENVVAR
+
+  check-action-args:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6  # required to use the local action
+      - name: No arg
+        uses: ./.github/actions/args-checker
+      - name: Empty arg
+        uses: ./.github/actions/args-checker
+        with:
+          arg1:
+      - name: Empty string arg
+        uses: ./.github/actions/args-checker
+        with:
+          arg1: ""
+      - name: Not-existing secret
+        uses: ./.github/actions/args-checker
+        with:
+          arg1: ${{ secrets.NOT_EXISTING_SECRET }}
+      - name: Not-existing secret or default
+        uses: ./.github/actions/args-checker
+        with:
+          arg1: ${{ secrets.NOT_EXISTING_SECRET || 'default' }}
+      - name: Not-existing envvar
+        uses: ./.github/actions/args-checker
+        with:
+          arg1: ${{ env.NOT_EXISTING_VAR }}
+      - name: Not-existing var or default
+        uses: ./.github/actions/args-checker
+        with:
+          arg1: ${{ env.NOT_EXISTING_VAR || 'default' }}
+      - name: Existing var suppresses default
+        env:
+          MY_VAR: var value
+        uses: ./.github/actions/args-checker
+        with:
+          arg1: ${{ env.MY_VAR || 'default' }}
