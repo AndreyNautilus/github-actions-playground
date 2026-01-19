@@ -1,0 +1,7 @@
+# For documentation see:
+# https://github.com/rhysd/actionlint/blob/main/docs/config.md
+
+paths:
+  .github/workflows/jobs-dependencies.yaml:
+    ignore:
+      - 'constant expression "false" in condition. remove the if'
