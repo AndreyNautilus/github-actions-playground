@@ -20,3 +20,11 @@ jobs:
           echo "github.ref = ${{ github.ref }}"
           echo "github.base_ref = ${{ github.base_ref }}"
           echo "github.ref_name = ${{ github.ref_name }}"
+
+  json-input:
+    uses: ./.github/workflows/verify-json-input.yaml
+    with:
+      json-string: |
+        {
+          "abc": 42
+        }
