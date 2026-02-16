@@ -31,10 +31,13 @@ jobs:
             def xyz
         run: |
           values_single_line=$(echo "$values" | tr '\n' ',')
-          echo "$values_single_line"
+          echo "single line: $values_single_line"
           IFS=$', ' read -r -a values_array <<< "$values_single_line"
           echo "${values_array[@]}"
           for val in "${values_array[@]}"; do
               value_pretty=$(echo "$val" | tr -d "[:space:]")
-              echo "$val - $value_pretty"
+              echo "|$val| - |$value_pretty|"
+              if [[ -n $val ]]; then
+                echo "!! |$val|"
+              fi
           done
