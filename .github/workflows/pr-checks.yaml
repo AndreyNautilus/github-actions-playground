@@ -20,3 +20,19 @@ jobs:
           echo "github.ref = ${{ github.ref }}"
           echo "github.base_ref = ${{ github.base_ref }}"
           echo "github.ref_name = ${{ github.ref_name }}"
+
+  ifs-multistring:
+    runs-on: ubuntu-latest
+    steps:
+      - name: read multiline envvar
+        env:
+          values: |
+            abc,
+            def xyz
+        run: |
+          IFS=$', \n' read -r -a values_array <<< "$values"
+          echo "$values_array"
+          for val in "${values_array[@]}"; do
+              value_pretty=$(echo "$val" | tr -d "[:space:]")
+              echo "$val - $value_pretty"
+          done
