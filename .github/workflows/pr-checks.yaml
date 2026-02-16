@@ -30,7 +30,8 @@ jobs:
             abc,
             def xyz
         run: |
-          IFS=$', \n' read -r -a values_array <<< "$values"
+          values_single_line=$(echo "$repositories" | tr '\n' ',')
+          IFS=$', ' read -r -a values_array <<< "$values_single_line"
           echo "$values_array"
           for val in "${values_array[@]}"; do
               value_pretty=$(echo "$val" | tr -d "[:space:]")
