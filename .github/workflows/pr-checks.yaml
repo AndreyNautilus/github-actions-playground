@@ -28,12 +28,12 @@ jobs:
         env:
           values: |
             abc,
-            def xyz,
+            def  xyz,
             zzz
         run: |
-          values_single_line=$(echo "$values" | tr '\n' ',')
+          values_single_line=$(echo "$values" | tr '\n,' ' ' | tr -s ' ')
           echo "single line: $values_single_line"
-          IFS=$', ' read -r -a values_array <<< "$values_single_line"
+          IFS=$' ' read -r -a values_array <<< "$values_single_line"
           echo "${values_array[@]}"
           for val in "${values_array[@]}"; do
               value_pretty=$(echo "$val" | tr -d "[:space:]")
