@@ -28,7 +28,8 @@ jobs:
         env:
           values: |
             abc,
-            def xyz
+            def xyz,
+            zzz
         run: |
           values_single_line=$(echo "$values" | tr '\n' ',')
           echo "single line: $values_single_line"
