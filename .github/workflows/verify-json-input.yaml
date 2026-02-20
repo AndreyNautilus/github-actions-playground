@@ -9,7 +9,7 @@ on:
         required: true
 
 env:
-  VERIFICATION: ${{ fromJSON(toJSON(inputs.json-string)) }}
+  VERIFICATION: ${{ toJSON(fromJSON(inputs.json-string)) }}
 
 jobs:
   echo:
