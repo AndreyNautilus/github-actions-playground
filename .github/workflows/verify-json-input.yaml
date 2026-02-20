@@ -1,0 +1,24 @@
+name: Verify json input
+
+on:
+  workflow_call:
+    inputs:
+      json-string:
+        description: A JSON serialized to string.
+        type: string
+        required: true
+
+env:
+  VERIFICATION: ${{ toJSON(fromJSON(inputs.json-string)) }}
+
+jobs:
+  echo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Output
+        env:
+          VAR: ${{ inputs.json-string }}
+        run: |
+          echo $VAR
+          echo "---"
+          echo $VERIFICATION
