@@ -51,3 +51,11 @@ jobs:
           "abc": 42,
           "def": "xyz"
         }
+  json-input-5:
+    uses: ./.github/workflows/verify-json-input.yaml
+    with:
+      json-string: |
+        {
+          "abc": 42,
+          "def": "xyz
+        }

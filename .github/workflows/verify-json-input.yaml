@@ -20,3 +20,5 @@ jobs:
           VAR: ${{ inputs.json-string }}
         run: |
           echo $VAR
+          echo "---"
+          echo $VERIFICATION
