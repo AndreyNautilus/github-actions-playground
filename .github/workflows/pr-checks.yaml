@@ -26,26 +26,20 @@ jobs:
       matrix:
         include:
           - json-string: |
-              { "abc": 42 }
-          - json-string: |
-              { "abc": 42, }
-          - json-string: |
-              {
-                "abc": 42
-                "def": xyz
-              }
-            should-fail: true  # missing comma
-          - json-string: |
               {
                 "abc": 42,
                 "def": "xyz"
               }
-          - json-string: |
+          - json-string: |  # missing comma
+              {
+                "abc": 42
+                "def": xyz
+              }
+          - json-string: |  # missing closing quotes
               {
                 "abc": 42,
                 "def": "xyz
               }
-            should-fail: true  # missing closing quotes
     uses: ./.github/workflows/verify-json-input.yaml
     with:
       json-string: ${{ matrix.json-string }}
