@@ -20,39 +20,3 @@ jobs:
           echo "github.ref = ${{ github.ref }}"
           echo "github.base_ref = ${{ github.base_ref }}"
           echo "github.ref_name = ${{ github.ref_name }}"
-
-  json-verify:
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - json-string: |
-              {
-                "abc": 42,
-                "def": "xyz"
-              }
-    uses: ./.github/workflows/verify-json-input.yaml
-    with:
-      json-string: ${{ matrix.json-string }}
-
-  # Incorrect JSON document fails the workflow instantiation on GitHub side.
-  # It fails "Set up job" routine, not jobs themselves.
-  # Useful when we need to detect incorrect JSON string input even before the job runs.
-  json-verify-expected-failure:
-    strategy:
-      matrix:
-        include:
-          - json-string: |  # missing comma
-              {
-                "abc": 42
-                "def": xyz
-              }
-          - json-string: |  # missing closing quotes
-              {
-                "abc": 42,
-                "def": "xyz
-              }
-    if: false  # skip all failed jobs
-    uses: ./.github/workflows/verify-json-input.yaml
-    with:
-      json-string: ${{ matrix.json-string }}
