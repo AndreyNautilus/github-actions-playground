@@ -20,3 +20,41 @@ jobs:
           echo "github.ref = ${{ github.ref }}"
           echo "github.base_ref = ${{ github.base_ref }}"
           echo "github.ref_name = ${{ github.ref_name }}"
+
+  ifs-multistring:
+    runs-on: ubuntu-latest
+    env:
+      output_file: output.txt
+    steps:
+      - name: read multiline envvar
+        env:
+          values: |
+            abc,
+            def  xyz,
+            zzz
+        run: |
+          values_single_line=$(echo "$values" | tr '\n,' ' ' | tr -s ' ')
+          echo "single line: $values_single_line"
+          IFS=$' ' read -r -a values_array <<< "$values_single_line"
+          echo "${values_array[@]}"
+          for val in "${values_array[@]}"; do
+              value_pretty=$(echo "$val" | tr -d "[:space:]")
+              echo $value_pretty >> ${{ env.output_file }}
+          done
+      - name: check output
+        env:
+          expected_output_file: expected.txt
+        run: |
+          echo "Output:"
+          cat ${{ env.output_file }}
+
+          {
+            echo "abc"
+            echo "def"
+            echo "xyz"
+            echo "zzz"
+          } > ${{ env.expected_output_file }}
+          echo "Expected output:"
+          cat ${{ env.expected_output_file }}
+
+          cmp -s ${{ env.output_file }} ${{ env.expected_output_file }}
