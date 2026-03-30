@@ -23,6 +23,8 @@ jobs:
 
   ifs-multistring:
     runs-on: ubuntu-latest
+    env:
+      output_file: output.txt
     steps:
       - name: read multiline envvar
         env:
@@ -37,8 +39,18 @@ jobs:
           echo "${values_array[@]}"
           for val in "${values_array[@]}"; do
               value_pretty=$(echo "$val" | tr -d "[:space:]")
-              echo "|$val| - |$value_pretty|"
-              if [[ -n $val ]]; then
-                echo "!! |$val|"
-              fi
+              echo $value_pretty >> ${{ env.output_file }}
           done
+      - name: check output
+        env:
+          expected_output_file: expected.txt
+        run: |
+          {
+            echo "abc"
+            echo "def"
+            echo "xyz"
+            echo "zzz"
+          } > ${{ env.expected_output_file }}
+          cat ${{ env.expected_output_file }}
+          cat ${{ env.output_file }}
+          cmp -s ${{ env.output_file }} ${{ env.expected_output_file }}
