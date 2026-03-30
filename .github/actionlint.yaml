@@ -5,3 +5,6 @@ paths:
   .github/workflows/jobs-dependencies.yaml:
     ignore:
       - 'constant expression "false" in condition. remove the if'
+  .github/workflows/syntax-checks.yaml:
+    ignore:
+      - 'constant expression "false" in condition. remove the if'
