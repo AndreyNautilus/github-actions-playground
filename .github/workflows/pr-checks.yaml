@@ -45,12 +45,16 @@ jobs:
         env:
           expected_output_file: expected.txt
         run: |
+          echo "Output:"
+          cat ${{ env.output_file }}
+
           {
             echo "abc"
             echo "def"
             echo "xyz"
             echo "zzz"
           } > ${{ env.expected_output_file }}
+          echo "Expected output:"
           cat ${{ env.expected_output_file }}
-          cat ${{ env.output_file }}
+
           cmp -s ${{ env.output_file }} ${{ env.expected_output_file }}
