@@ -16,7 +16,7 @@ jobs:
   debug-logging:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Call action without params
         # re-run the job with "debug output" checkbox enabled to see debug output
         uses: ./.github/actions/debug-logging
@@ -111,7 +111,7 @@ jobs:
     env:
       ANOTHER_CUSTOM_ENVVAR: "Gendalf's never late"
     steps:
-      - uses: actions/checkout@v6  # required to use the local action
+      - uses: actions/checkout@v7  # required to use the local action
       - name: Action access jobs envvars
         uses: ./.github/actions/print-envvar
         env:
@@ -124,7 +124,7 @@ jobs:
   check-action-args:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6  # required to use the local action
+      - uses: actions/checkout@v7  # required to use the local action
       - name: No arg
         uses: ./.github/actions/args-checker
       - name: Empty arg
